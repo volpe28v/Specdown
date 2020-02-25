@@ -15,7 +15,7 @@ class SpecTree {
       this.nodes.length !== 0 ? this.nodes[this.nodes.length - 1] : null
     this.nodes.push(node)
 
-    if (!(lastNode === null)) {
+    if (lastNode !== null) {
       if (lastNode.level < node.level) {
         lastNode.children.push(node)
         node.parent = lastNode
@@ -77,6 +77,7 @@ class Node {
     }
   }
 
+  // TODO この辺うまく抽象化して抽出したら多言語化対応できそう
   decoratedText() {
     switch (this.symbol) {
       case 'd':
