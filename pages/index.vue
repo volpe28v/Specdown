@@ -20,8 +20,8 @@
             :value="render"
           />
         </el-select>
-        <el-button type="primary" v-clipboard:copy="output">
-          Copy!
+        <el-button type="primary" v-clipboard:copy="output" @click="onCopy">
+          Copy
         </el-button>
       </div>
       <div class="render">
@@ -58,6 +58,11 @@ export default {
   computed: {
     output() {
       return converter(this.input, this.render)
+    }
+  },
+  methods: {
+    onCopy() {
+      this.$message('Copied!')
     }
   }
 }
