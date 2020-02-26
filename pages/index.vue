@@ -11,14 +11,19 @@
       </div>
     </div>
     <div class="right-pane">
-      <el-select v-model="render" value-key="name" placeholder="Select">
-        <el-option
-          v-for="render in renders"
-          :label="render.name"
-          :key="render.name"
-          :value="render"
-        />
-      </el-select>
+      <div class="right-header">
+        <el-select v-model="render" value-key="name" placeholder="Select">
+          <el-option
+            v-for="render in renders"
+            :label="render.name"
+            :key="render.name"
+            :value="render"
+          />
+        </el-select>
+        <el-button type="primary" v-clipboard:copy="output">
+          Copy!
+        </el-button>
+      </div>
       <div class="render">
         <pre v-highlightjs="output"><code></code></pre>
       </div>
@@ -79,8 +84,12 @@ export default {
   flex-direction: column;
 }
 
+.right-header {
+  flex-direction: row;
+  margin: 4px;
+}
+
 .render {
   flex: 1;
-  margin: 10px;
 }
 </style>
