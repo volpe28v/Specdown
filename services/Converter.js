@@ -1,16 +1,27 @@
 export default function(markdown) {
-  const st = new SpecTree()
+  const st = new SpecTree(rubySpecRender)
   markdown.split('\n').forEach((line) => st.add(line))
   return st.toSpec()
 }
 
+const rubySpecRender = {
+  symbols: {
+    d: (body) => `describe '${body}' do`,
+    c: (body) => `context '${body}' do`,
+    i: (body) => `xit '${body}' do`
+  },
+  comment: (body) => `# ${body}`,
+  terminal: 'end'
+}
+
 class SpecTree {
-  constructor() {
+  constructor(specRender) {
     this.nodes = [new RootNode()]
+    this.specRender = specRender
   }
 
   add(line) {
-    const node = new Node(line)
+    const node = new Node(line, this.specRender)
     if (node.isEmpty()) return
 
     const lastNode = this.nodes[this.nodes.length - 1]
@@ -48,8 +59,9 @@ class RootNode {
 }
 
 class Node {
-  constructor(text) {
+  constructor(text, specRender) {
     this.text = text
+    this.specRender = specRender
     this.parent = null
     this.children = []
 
@@ -83,22 +95,17 @@ class Node {
     }
   }
 
-  // TODO この辺うまく抽象化して抽出したら多言語化対応できそう
   decoratedText() {
-    switch (this.symbol) {
-      case 'd':
-        return `describe '${this.body}' do`
-      case 'c':
-        return `context '${this.body}' do`
-      case 'i':
-        return `xit '${this.body}' do`
-      default:
-        return `# ${this.body}`
+    const specText = this.specRender.symbols[this.symbol]
+    if (specText) {
+      return specText(this.body)
+    } else {
+      return this.specRender.comment(this.body)
     }
   }
 
   terminalSymbol() {
-    return 'end'
+    return this.specRender.terminal
   }
 
   isEmpty() {
