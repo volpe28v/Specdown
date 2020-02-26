@@ -11,6 +11,8 @@ class SpecTree {
 
   add(line) {
     const node = new Node(line)
+    if (node.isEmpty()) return
+
     const lastNode = this.nodes[this.nodes.length - 1]
     this.nodes.push(node)
 
@@ -83,8 +85,6 @@ class Node {
 
   // TODO この辺うまく抽象化して抽出したら多言語化対応できそう
   decoratedText() {
-    if (this.isEmpty()) return ''
-
     switch (this.symbol) {
       case 'd':
         return `describe '${this.body}' do`
