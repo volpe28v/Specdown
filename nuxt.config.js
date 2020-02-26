@@ -23,11 +23,17 @@ export default {
   /*
    ** Global CSS
    */
-  css: ['element-ui/lib/theme-chalk/index.css'],
+  css: [
+    'element-ui/lib/theme-chalk/index.css',
+    {
+      src: '~/node_modules/highlight.js/styles/tomorrow-night-bright.css',
+      lang: 'css'
+    }
+  ],
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['@/plugins/element-ui'],
+  plugins: ['@/plugins/element-ui', '@/plugins/vue-highlightjs'],
   /*
    ** Nuxt.js dev-modules
    */

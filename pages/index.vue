@@ -20,7 +20,7 @@
         />
       </el-select>
       <div class="render">
-        <pre>{{ output }}</pre>
+        <pre v-highlightjs="output"><code></code></pre>
       </div>
     </div>
   </div>
