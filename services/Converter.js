@@ -19,10 +19,8 @@ class SpecTree {
       node.parent = lastNode
     } else if (lastNode.level === node.level) {
       const parent = lastNode.parent
-      if (parent !== null) {
-        parent.children.push(node)
-        node.parent = parent
-      }
+      parent.children.push(node)
+      node.parent = parent
     } else {
       const parents = this.nodes.filter((n) => n.level < node.level)
       const parent = parents.length > 0 ? parents[parents.length - 1] : null
