@@ -6,38 +6,46 @@ export default function(markdown) {
 
 class SpecTree {
   constructor() {
-    this.nodes = []
+    this.nodes = [new RootNode()]
   }
 
   add(line) {
     const node = new Node(line)
-    const lastNode =
-      this.nodes.length !== 0 ? this.nodes[this.nodes.length - 1] : null
+    const lastNode = this.nodes[this.nodes.length - 1]
     this.nodes.push(node)
 
-    if (lastNode !== null) {
-      if (lastNode.level < node.level) {
-        lastNode.children.push(node)
-        node.parent = lastNode
-      } else if (lastNode.level === node.level) {
-        const parent = lastNode.parent
-        if (parent !== null) {
-          parent.children.push(node)
-          node.parent = parent
-        }
-      } else {
-        const parents = this.nodes.filter((n) => n.level < node.level)
-        const parent = parents.length > 0 ? parents[parents.length - 1] : null
-        if (parent !== null) {
-          parent.children.push(node)
-          node.parent = parent
-        }
+    if (lastNode.level < node.level) {
+      lastNode.children.push(node)
+      node.parent = lastNode
+    } else if (lastNode.level === node.level) {
+      const parent = lastNode.parent
+      if (parent !== null) {
+        parent.children.push(node)
+        node.parent = parent
+      }
+    } else {
+      const parents = this.nodes.filter((n) => n.level < node.level)
+      const parent = parents.length > 0 ? parents[parents.length - 1] : null
+      if (parent !== null) {
+        parent.children.push(node)
+        node.parent = parent
       }
     }
   }
 
   toSpec() {
     return this.nodes[0].toSpec()
+  }
+}
+
+class RootNode {
+  constructor() {
+    this.children = []
+    this.level = -1
+  }
+
+  toSpec() {
+    return this.children.map((c) => c.toSpec()).join('\n')
   }
 }
 
