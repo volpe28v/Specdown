@@ -5,7 +5,7 @@
         v-model="input"
         :autosize="{ minRows: 100, maxRows: 200 }"
         type="textarea"
-        placeholder="Please input"
+        placeholder="Please input as markdown"
       />
     </div>
     <div class="render">

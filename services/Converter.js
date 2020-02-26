@@ -26,10 +26,8 @@ class SpecTree {
     } else {
       const parents = this.nodes.filter((n) => n.level < node.level)
       const parent = parents.length > 0 ? parents[parents.length - 1] : null
-      if (parent !== null) {
-        parent.children.push(node)
-        node.parent = parent
-      }
+      parent.children.push(node)
+      node.parent = parent
     }
   }
 
@@ -76,7 +74,7 @@ class Node {
       return
     }
 
-    matched = this.text.match(/^([ ]*)(.+)$/)
+    matched = this.text.match(/^([ ]*)(.*)$/)
     if (matched) {
       this.spaces = matched[1]
       this.body = matched[2]
@@ -87,6 +85,8 @@ class Node {
 
   // TODO この辺うまく抽象化して抽出したら多言語化対応できそう
   decoratedText() {
+    if (this.isEmpty()) return ''
+
     switch (this.symbol) {
       case 'd':
         return `describe '${this.body}' do`
@@ -101,6 +101,10 @@ class Node {
 
   terminalSymbol() {
     return 'end'
+  }
+
+  isEmpty() {
+    return this.body.length === 0
   }
 
   isComment() {
