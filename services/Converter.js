@@ -1,17 +1,7 @@
-export default function(markdown) {
-  const st = new SpecTree(rubySpecRender)
+export default function(markdown, render) {
+  const st = new SpecTree(render)
   markdown.split('\n').forEach((line) => st.add(line))
   return st.toSpec()
-}
-
-const rubySpecRender = {
-  symbols: {
-    d: (body) => `describe '${body}' do`,
-    c: (body) => `context '${body}' do`,
-    i: (body) => `xit '${body}' do`
-  },
-  comment: (body) => `# ${body}`,
-  terminal: 'end'
 }
 
 class SpecTree {
