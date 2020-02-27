@@ -1,18 +1,22 @@
 <template>
   <div class="main">
     <div class="left-pane">
-      <editor v-model="input" @init="editorInit"></editor>
-
-      <!-- <el&#45;input -->
-      <!--   v&#45;model="input" -->
-      <!--   :autosize="{ minRows: 100, maxRows: 200 }" -->
-      <!--   type="textarea" -->
-      <!--   placeholder="Please input as markdown" -->
-      <!-- /> -->
+      <el-input
+        v-model="input"
+        type="textarea"
+        placeholder="Please input as markdown"
+        @input="updateSpec"
+        @keydown.tab.prevent.native="tabber($event)"
+      />
     </div>
     <div class="right-pane">
       <div class="right-header">
-        <el-select v-model="render" value-key="name" placeholder="Select">
+        <el-select
+          v-model="render"
+          value-key="name"
+          placeholder="Select"
+          @change="updateSpec"
+        >
           <el-option
             v-for="render in renders"
             :key="render.name"
@@ -21,7 +25,7 @@
           />
         </el-select>
         <el-button v-clipboard:copy="output" type="primary" @click="onCopy">
-          Copy
+          <i class="el-icon-copy-document"></i>
         </el-button>
       </div>
       <div class="render">
@@ -32,56 +36,56 @@
 </template>
 
 <script>
+import { debounce } from 'lodash'
 import converter from '@/services/Converter'
 import specRenders from '@/services/SpecRenders'
 
+const sampleMarkdown = [
+  '- d: description',
+  '    - c: context1',
+  '        - i: expect1',
+  '        - i: expect2',
+  '            - comment',
+  '        - i: expect3',
+  '    - c: context2',
+  '        - i: expect1',
+  '            - comment',
+  '        - i: expect2',
+  '        - i: expect3'
+]
+
 export default {
-  components: {
-    editor: require('vue2-ace-editor')
-  },
   data() {
     return {
-      input: [
-        '- d: description',
-        '    - c: context1',
-        '        - i: expect1',
-        '        - i: expect2',
-        '            - comment',
-        '        - i: expect3',
-        '    - c: context2',
-        '        - i: expect1',
-        '            - comment',
-        '        - i: expect2',
-        '        - i: expect3'
-      ].join('\n'),
+      input: sampleMarkdown.join('\n'),
+      output: '',
       render: specRenders[0],
       renders: specRenders
     }
   },
-  computed: {
-    output() {
-      return converter(this.input, this.render)
-    }
+  mounted() {
+    this.output = converter(this.input, this.render)
   },
   methods: {
-    editorInit(editor) {
-      require('brace/ext/language_tools')
-      require('brace/theme/chaos')
-
-      editor.setOptions({
-        showPrintMargin: false
-      })
-      editor.setFontSize(14)
-      editor.setTheme('ace/theme/chaos')
-      editor.getSession().setUseWrapMode(true)
-      editor.$blockScrolling = Infinity
-      editor.session.setOptions({
-        tabSize: 4,
-        useSoftTabs: false
-      })
-    },
+    updateSpec: debounce(function() {
+      this.output = converter(this.input, this.render)
+    }, 500),
     onCopy() {
       this.$message('Copied!')
+    },
+    tabber(event) {
+      const text = this.input
+      const originalSelectionStart = event.target.selectionStart
+      const textStart = text.slice(0, originalSelectionStart)
+      const textEnd = text.slice(originalSelectionStart)
+
+      const spaceNumber = 4
+      const spaces = ' '.repeat(spaceNumber)
+
+      this.input = `${textStart}${spaces}${textEnd}`
+      this.$nextTick(() => {
+        event.target.selectionEnd = originalSelectionStart + spaceNumber
+      })
     }
   }
 }
@@ -109,6 +113,14 @@ body,
   flex: 1;
 }
 
+.el-textarea__inner {
+  height: 100%;
+  font: 12px / normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas',
+    'source-code-pro', monospace;
+  font-size: 16px;
+  font-weight: bold;
+}
+
 .right-pane {
   display: flex;
   flex: 1;
@@ -122,5 +134,6 @@ body,
 
 .render {
   flex: 1;
+  overflow-y: auto;
 }
 </style>
