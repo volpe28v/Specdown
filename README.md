@@ -2,6 +2,8 @@
 
 > markdown to spec converter
 
+![image](https://user-images.githubusercontent.com/754962/75451661-4849c180-59b4-11ea-8989-d3b32b1f27ce.png)
+
 ## Build Setup
 
 ``` bash
