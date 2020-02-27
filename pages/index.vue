@@ -1,26 +1,26 @@
 <template>
   <div class="main">
     <div class="left-pane">
-      <div class="inputter">
-        <el-input
-          v-model="input"
-          :autosize="{ minRows: 100, maxRows: 200 }"
-          type="textarea"
-          placeholder="Please input as markdown"
-        />
-      </div>
+      <editor v-model="input" @init="editorInit"></editor>
+
+      <!-- <el&#45;input -->
+      <!--   v&#45;model="input" -->
+      <!--   :autosize="{ minRows: 100, maxRows: 200 }" -->
+      <!--   type="textarea" -->
+      <!--   placeholder="Please input as markdown" -->
+      <!-- /> -->
     </div>
     <div class="right-pane">
       <div class="right-header">
         <el-select v-model="render" value-key="name" placeholder="Select">
           <el-option
             v-for="render in renders"
-            :label="render.name"
             :key="render.name"
+            :label="render.name"
             :value="render"
           />
         </el-select>
-        <el-button type="primary" v-clipboard:copy="output" @click="onCopy">
+        <el-button v-clipboard:copy="output" type="primary" @click="onCopy">
           Copy
         </el-button>
       </div>
@@ -36,6 +36,9 @@ import converter from '@/services/Converter'
 import specRenders from '@/services/SpecRenders'
 
 export default {
+  components: {
+    editor: require('vue2-ace-editor')
+  },
   data() {
     return {
       input: [
@@ -61,6 +64,22 @@ export default {
     }
   },
   methods: {
+    editorInit(editor) {
+      require('brace/ext/language_tools')
+      require('brace/theme/chaos')
+
+      editor.setOptions({
+        showPrintMargin: false
+      })
+      editor.setFontSize(14)
+      editor.setTheme('ace/theme/chaos')
+      editor.getSession().setUseWrapMode(true)
+      editor.$blockScrolling = Infinity
+      editor.session.setOptions({
+        tabSize: 4,
+        useSoftTabs: false
+      })
+    },
     onCopy() {
       this.$message('Copied!')
     }
@@ -69,22 +88,29 @@ export default {
 </script>
 
 <style>
+html,
+body,
+#__nuxt,
+#__layout,
+.main,
+#__layout > div {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+}
+
 .main {
   display: flex;
-
-  height: 100%;
   overflow: hidden;
 }
 
 .left-pane {
-  flex: 1;
-}
-
-.inputter {
+  display: flex;
   flex: 1;
 }
 
 .right-pane {
+  display: flex;
   flex: 1;
   flex-direction: column;
 }
