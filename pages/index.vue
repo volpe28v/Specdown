@@ -5,7 +5,7 @@
         v-model="input"
         type="textarea"
         placeholder="Please input as markdown"
-        @input="updateSpec"
+        @input="onInput"
         @keydown.tab.prevent.native="tabber($event)"
       />
     </div>
@@ -67,9 +67,12 @@ export default {
     this.output = converter(this.input, this.render)
   },
   methods: {
-    updateSpec: debounce(function() {
-      this.output = converter(this.input, this.render)
+    onInput: debounce(function() {
+      this.updateSpec()
     }, 500),
+    updateSpec() {
+      this.output = converter(this.input, this.render)
+    },
     onCopy() {
       this.$message('Copied!')
     },
