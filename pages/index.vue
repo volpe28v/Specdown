@@ -29,7 +29,7 @@
         </el-button>
       </div>
       <div class="render">
-        <pre v-highlightjs="output"><code></code></pre>
+        <pre v-highlightjs="output"><code :class="format"></code></pre>
       </div>
     </div>
   </div>
@@ -43,10 +43,13 @@ import specRenders from '@/services/SpecRenders'
 const sampleMarkdown = [
   '- d: description',
   '    - c: context1',
+  '        - b: setup',
+  '            - comment',
   '        - i: expect1',
   '        - i: expect2',
   '            - comment',
   '        - i: expect3',
+  '        - a: tear down',
   '    - c: context2',
   '        - i: expect1',
   '            - comment',
@@ -65,6 +68,11 @@ export default {
   },
   mounted() {
     this.output = converter(this.input, this.render)
+  },
+  computed: {
+    format() {
+      return this.render.format
+    }
   },
   methods: {
     onInput: debounce(function() {
