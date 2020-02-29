@@ -66,20 +66,21 @@ class Node {
   }
 
   parse() {
-    let matched = this.text.match(/^([ ]*)-[ ]*((.+):)?[ ]*(.+)$/)
+    let matched = this.text.match(/^([ ]*)-[ ]*((.+):)?(.*)$/)
     if (matched) {
       this.spaces = matched[1]
       this.symbol = matched[3]
-      this.body = matched[4]
+      this.body = matched[4].trim()
       this.level = this.spaces.length / 4
       this.indent = ' '.repeat(this.level * 2)
       return
     }
 
-    matched = this.text.match(/^([ ]*)(.*)$/)
+    matched = this.text.match(/^([ ]*)(.+)$/)
     if (matched) {
       this.spaces = matched[1]
-      this.body = matched[2]
+      this.body = matched[2].trim()
+      this.symbol = 'comment'
       this.level = this.spaces.length / 4
       this.indent = ' '.repeat(this.level * 2)
     }
@@ -99,11 +100,11 @@ class Node {
   }
 
   isEmpty() {
-    return this.body.length === 0
+    return this.symbol === null
   }
 
   isComment() {
-    return this.symbol == null
+    return this.specRender.symbols[this.symbol] == null
   }
 
   toSpec() {
