@@ -82,10 +82,7 @@ class Node {
   }
 
   toSpec(render) {
-    return this.specTextArray(render)
-      .flat()
-      .filter((e) => e !== null)
-      .join('\n')
+    return this.specTextArray(render).join('\n')
   }
 
   specTextArray(render) {
@@ -93,13 +90,13 @@ class Node {
     if (specText) {
       return [
         this.indent + specText(this.body),
-        this.children.map((c) => c.toSpec(render)),
+        ...this.children.map((c) => c.toSpec(render)),
         this.indent + render.terminal
       ]
     } else {
       return [
         this.indent + render.comment(this.body),
-        this.children.map((c) => c.toSpec(render))
+        ...this.children.map((c) => c.toSpec(render))
       ]
     }
   }
