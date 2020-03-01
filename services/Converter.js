@@ -1,17 +1,16 @@
 export default function(markdown, render) {
-  const st = new SpecTree(render)
+  const st = new SpecTree()
   markdown.split('\n').forEach((line) => st.add(line))
-  return st.toSpec()
+  return st.toSpec(render)
 }
 
 class SpecTree {
-  constructor(specRender) {
+  constructor() {
     this.nodes = [new RootNode()]
-    this.specRender = specRender
   }
 
   add(line) {
-    const node = new Node(line, this.specRender)
+    const node = new Node(line)
     if (node.isEmpty()) return
 
     const lastNode = this.nodes[this.nodes.length - 1]
@@ -32,8 +31,8 @@ class SpecTree {
     }
   }
 
-  toSpec() {
-    return this.nodes[0].toSpec()
+  toSpec(render) {
+    return this.nodes[0].toSpec(render)
   }
 }
 
@@ -43,15 +42,14 @@ class RootNode {
     this.level = -1
   }
 
-  toSpec() {
-    return this.children.map((c) => c.toSpec()).join('\n')
+  toSpec(render) {
+    return this.children.map((c) => c.toSpec(render)).join('\n')
   }
 }
 
 class Node {
-  constructor(text, specRender) {
+  constructor(text) {
     this.text = text
-    this.specRender = specRender
     this.parent = null
     this.children = []
 
@@ -66,55 +64,67 @@ class Node {
   }
 
   parse() {
-    let matched = this.text.match(/^([ ]*)-[ ]*((.+):)?(.*)$/)
+    if (this.parseAsSpecElement()) return
+    this.parseAsComment()
+  }
+
+  parseAsSpecElement() {
+    const matched = this.text.match(/^([ ]*)-[ ]*((.+):)?(.*)$/)
     if (matched) {
       this.spaces = matched[1]
       this.symbol = matched[3]
       this.body = matched[4].trim()
       this.level = this.spaces.length / 4
       this.indent = ' '.repeat(this.level * 2)
-      return
+      return true
+    } else {
+      return false
     }
+  }
 
-    matched = this.text.match(/^([ ]*)(.+)$/)
+  parseAsComment() {
+    const matched = this.text.match(/^([ ]*)(.+)$/)
     if (matched) {
       this.spaces = matched[1]
       this.body = matched[2].trim()
       this.symbol = 'comment'
       this.level = this.spaces.length / 4
       this.indent = ' '.repeat(this.level * 2)
-    }
-  }
-
-  decoratedText() {
-    const specText = this.specRender.symbols[this.symbol]
-    if (specText) {
-      return specText(this.body)
+      return true
     } else {
-      return this.specRender.comment(this.body)
+      return false
     }
-  }
-
-  terminalSymbol() {
-    return this.specRender.terminal
   }
 
   isEmpty() {
     return this.symbol === null
   }
 
-  isComment() {
-    return this.specRender.symbols[this.symbol] == null
-  }
-
-  toSpec() {
+  toSpec(render) {
     return [
-      this.indent + this.decoratedText(),
-      this.children.map((c) => c.toSpec()),
-      this.isComment() ? null : this.indent + this.terminalSymbol()
+      this.indent + this.decoratedText(render),
+      this.children.map((c) => c.toSpec(render)),
+      this.isComment(render) ? null : this.indent + this.terminalSymbol(render)
     ]
       .flat(10)
       .filter((e) => e !== null)
       .join('\n')
+  }
+
+  decoratedText(render) {
+    const specText = render.symbols[this.symbol]
+    if (specText) {
+      return specText(this.body)
+    } else {
+      return render.comment(this.body)
+    }
+  }
+
+  terminalSymbol(render) {
+    return render.terminal
+  }
+
+  isComment(render) {
+    return render.symbols[this.symbol] == null
   }
 }

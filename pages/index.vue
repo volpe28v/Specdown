@@ -66,13 +66,13 @@ export default {
       renders: specRenders
     }
   },
-  mounted() {
-    this.output = converter(this.input, this.render)
-  },
   computed: {
     format() {
       return this.render.format
     }
+  },
+  mounted() {
+    this.output = converter(this.input, this.render)
   },
   methods: {
     onInput: debounce(function() {
