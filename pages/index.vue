@@ -124,12 +124,16 @@ body,
   flex: 1;
 }
 
+.el-textarea__inner,
+code {
+  font-family: Menlo, Monaco, 'Courier New', monospace;
+  font-size: 14px;
+}
+
 .el-textarea__inner {
   height: 100%;
-  font: 12px / normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas',
-    'source-code-pro', monospace;
-  font-size: 16px;
-  font-weight: bold;
+  line-height: 21px;
+  padding-top: 8px;
 }
 
 .right-pane {
@@ -146,5 +150,10 @@ body,
 .render {
   flex: 1;
   overflow-y: auto;
+  margin: 0 10px;
+}
+
+code {
+  line-height: 18px;
 }
 </style>

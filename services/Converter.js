@@ -11,7 +11,7 @@ class SpecTree {
 
   add(line) {
     const node = new Node(line)
-    if (node.isEmpty()) return
+    if (!node.parse()) return
 
     const lastNode = this.nodes[this.nodes.length - 1]
     this.nodes.push(node)
@@ -39,7 +39,10 @@ class SpecTree {
 class RootNode {
   constructor() {
     this.children = []
-    this.level = -1
+  }
+
+  get level() {
+    return -1
   }
 
   toSpec(render) {
@@ -56,75 +59,48 @@ class Node {
     this.spaces = null
     this.symbol = null
     this.body = null
-
-    this.level = 0
-    this.indent = 0
-
-    this.parse()
   }
 
   parse() {
-    if (this.parseAsSpecElement()) return
-    this.parseAsComment()
-  }
-
-  parseAsSpecElement() {
-    const matched = this.text.match(/^([ ]*)-[ ]*((.+):)?(.*)$/)
+    const matched = this.text.match(/^([ ]*)-(([^:\n]+?):)?(.*)$/)
     if (matched) {
       this.spaces = matched[1]
-      this.symbol = matched[3]
+      this.symbol = matched[3] ? matched[3].trim() : null
       this.body = matched[4].trim()
-      this.level = this.spaces.length / 4
-      this.indent = ' '.repeat(this.level * 2)
       return true
     } else {
       return false
     }
   }
 
-  parseAsComment() {
-    const matched = this.text.match(/^([ ]*)(.+)$/)
-    if (matched) {
-      this.spaces = matched[1]
-      this.body = matched[2].trim()
-      this.symbol = 'comment'
-      this.level = this.spaces.length / 4
-      this.indent = ' '.repeat(this.level * 2)
-      return true
-    } else {
-      return false
-    }
+  get level() {
+    return this.spaces.length / 4
   }
 
-  isEmpty() {
-    return this.symbol === null
+  get indent() {
+    return ' '.repeat(this.level * 2)
   }
 
   toSpec(render) {
-    return [
-      this.indent + this.decoratedText(render),
-      this.children.map((c) => c.toSpec(render)),
-      this.isComment(render) ? null : this.indent + this.terminalSymbol(render)
-    ]
-      .flat(10)
+    return this.specTextArray(render)
+      .flat()
       .filter((e) => e !== null)
       .join('\n')
   }
 
-  decoratedText(render) {
+  specTextArray(render) {
     const specText = render.symbols[this.symbol]
     if (specText) {
-      return specText(this.body)
+      return [
+        this.indent + specText(this.body),
+        this.children.map((c) => c.toSpec(render)),
+        this.indent + render.terminal
+      ]
     } else {
-      return render.comment(this.body)
+      return [
+        this.indent + render.comment(this.body),
+        this.children.map((c) => c.toSpec(render))
+      ]
     }
-  }
-
-  terminalSymbol(render) {
-    return render.terminal
-  }
-
-  isComment(render) {
-    return render.symbols[this.symbol] == null
   }
 }
