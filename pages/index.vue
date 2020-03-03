@@ -1,16 +1,10 @@
 <template>
   <div class="main">
-    <div class="left-pane">
-      <el-input
-        v-model="input"
-        type="textarea"
-        placeholder="Please input as markdown"
-        @input="onInput"
-        @keydown.tab.prevent.native="tabber($event)"
-      />
-    </div>
-    <div class="right-pane">
-      <div class="right-header">
+    <div class="header">
+      <div class="logo">
+        SpecDown
+      </div>
+      <div class="right-controller">
         <el-select
           v-model="render"
           value-key="name"
@@ -28,8 +22,21 @@
           <i class="el-icon-copy-document"></i>
         </el-button>
       </div>
-      <div class="render">
-        <pre v-highlightjs="output"><code :class="format"></code></pre>
+    </div>
+    <div class="body">
+      <div class="left-pane">
+        <el-input
+          v-model="input"
+          type="textarea"
+          placeholder="Please input as markdown"
+          @input="onInput"
+          @keydown.tab.prevent.native="tabber($event)"
+        />
+      </div>
+      <div class="right-pane">
+        <div class="render">
+          <pre v-highlightjs="output"><code :class="format"></code></pre>
+        </div>
       </div>
     </div>
   </div>
@@ -111,10 +118,29 @@ body,
 #__layout > div {
   width: 100%;
   height: 100%;
-  background-color: black;
 }
 
 .main {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  padding: 5px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.body {
+  flex: 1;
   display: flex;
   overflow: hidden;
 }
@@ -140,11 +166,7 @@ code {
   display: flex;
   flex: 1;
   flex-direction: column;
-}
-
-.right-header {
-  flex-direction: row;
-  margin: 4px;
+  background-color: black;
 }
 
 .render {
