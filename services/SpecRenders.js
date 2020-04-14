@@ -25,5 +25,16 @@ export default [
     },
     comment: (body) => `// ${body}`,
     terminal: '})'
+  },
+  {
+    name: 'ScalaTest - FlatSpec',
+    format: 'scala',
+    symbols: {
+      i: (body) => `it should "${body}" in {`,
+      b: (body) => `before { ${body.length !== 0 ? '// ' + body : ''}`,
+      a: (body) => `after { ${body.length !== 0 ? '// ' + body : ''}`
+    },
+    comment: (body) => `// ${body}`,
+    terminal: '}'
   }
 ]
