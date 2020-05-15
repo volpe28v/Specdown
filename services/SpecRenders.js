@@ -27,6 +27,19 @@ export default [
     terminal: '})'
   },
   {
+    name: 'ScalaTest - Spec',
+    format: 'scala',
+    symbols: {
+      d: (body) => `describe("${body}") {`,
+      c: (body) => `describe("${body}") {`,
+      i: (body) => `it("${body}") {`,
+      b: (body) => `before { ${body.length !== 0 ? '// ' + body : ''}`,
+      a: (body) => `after { ${body.length !== 0 ? '// ' + body : ''}`
+    },
+    comment: (body) => `// ${body}`,
+    terminal: '}'
+  },
+  {
     name: 'ScalaTest - FlatSpec',
     format: 'scala',
     symbols: {
