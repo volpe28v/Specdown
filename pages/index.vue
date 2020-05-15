@@ -30,8 +30,8 @@
           type="textarea"
           placeholder="Please input as markdown"
           @input="onInput"
-          @keydown.tab.prevent.native="tabber($event)"
-          @keydown.enter.prevent.native="enter($event)"
+          @keydown.tab.prevent.native="onTab($event)"
+          @keydown.enter.prevent.native="onEnter($event)"
         />
       </div>
       <div class="right-pane">
@@ -92,7 +92,7 @@ export default {
     onCopy() {
       this.$message('Copied!')
     },
-    enter(event) {
+    onEnter(event) {
       if (event.keyCode !== 13) return
 
       const text = this.input
@@ -121,7 +121,7 @@ export default {
 
       this.updateSpec()
     },
-    tabber(event) {
+    onTab(event) {
       const text = this.input
       const originalSelectionStart = event.target.selectionStart
 
