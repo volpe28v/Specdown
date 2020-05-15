@@ -94,16 +94,53 @@ export default {
     tabber(event) {
       const text = this.input
       const originalSelectionStart = event.target.selectionStart
-      const textStart = text.slice(0, originalSelectionStart)
-      const textEnd = text.slice(originalSelectionStart)
+
+      const [linePos, lineAll] = this._getCursorLinePos(
+        originalSelectionStart,
+        text
+      )
 
       const spaceNumber = 4
       const spaces = ' '.repeat(spaceNumber)
 
-      this.input = `${textStart}${spaces}${textEnd}`
-      this.$nextTick(() => {
-        event.target.selectionEnd = originalSelectionStart + spaceNumber
-      })
+      if (event.shiftKey) {
+        const listReg = new RegExp('^' + spaces + '(.*)')
+        const matches = lineAll[linePos].match(listReg)
+        if (matches) {
+          lineAll[linePos] = matches[1]
+
+          this.input = lineAll.join('\n')
+          this.$nextTick(() => {
+            event.target.selectionEnd = originalSelectionStart - spaceNumber
+          })
+        }
+      } else {
+        lineAll[linePos] = spaces + lineAll[linePos]
+
+        this.input = lineAll.join('\n')
+        this.$nextTick(() => {
+          event.target.selectionEnd = originalSelectionStart + spaceNumber
+        })
+      }
+      this.updateSpec()
+    },
+    // ref: https://qiita.com/legokichi/items/ed2629b037e72c6cd639
+    _getCursorLinePos(pos, text) {
+      const lines = text.split('\n')
+      const charCounts = lines.map((line) => line.length + 1)
+      if (charCounts.length > 0 && charCounts[0] > 0) {
+        charCounts[0] -= 1
+      }
+      let cur = 0
+      let sum = 0
+      for (let i = 0; i < charCounts.length; i++) {
+        sum += charCounts[i]
+        if (pos <= sum) {
+          cur = i + 1
+          break
+        }
+      }
+      return [cur - 1, lines]
     }
   }
 }
