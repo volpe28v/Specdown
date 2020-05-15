@@ -111,6 +111,12 @@ export default {
         this.$nextTick(() => {
           event.target.selectionEnd = originalSelectionStart + prefix.length + 1
         })
+      } else {
+        lineAll.splice(linePos + 1, 0, '')
+        this.input = lineAll.join('\n')
+        this.$nextTick(() => {
+          event.target.selectionEnd = originalSelectionStart + 1
+        })
       }
 
       this.updateSpec()
