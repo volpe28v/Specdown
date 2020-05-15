@@ -2,7 +2,7 @@
 
 > markdown to spec converter
 
-![image](https://user-images.githubusercontent.com/754962/75451661-4849c180-59b4-11ea-8989-d3b32b1f27ce.png)
+![image](https://user-images.githubusercontent.com/754962/82063395-621eb900-9706-11ea-847f-07f5ee7f45f6.png)
 
 ## Build Setup
 
