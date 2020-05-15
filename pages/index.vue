@@ -31,6 +31,7 @@
           placeholder="Please input as markdown"
           @input="onInput"
           @keydown.tab.prevent.native="tabber($event)"
+          @keydown.enter.prevent.native="enter($event)"
         />
       </div>
       <div class="right-pane">
@@ -90,6 +91,35 @@ export default {
     },
     onCopy() {
       this.$message('Copied!')
+    },
+    enter(event) {
+      if (event.keyCode !== 13) return
+
+      const text = this.input
+      const originalSelectionStart = event.target.selectionStart
+
+      const [linePos, lineAll] = this._getCursorLinePos(
+        originalSelectionStart,
+        text
+      )
+
+      const matches = lineAll[linePos].match(/(^[ ]*([-][ ]?)).*/)
+      if (matches) {
+        const prefix = matches[1]
+        lineAll.splice(linePos + 1, 0, prefix)
+        this.input = lineAll.join('\n')
+        this.$nextTick(() => {
+          event.target.selectionEnd = originalSelectionStart + prefix.length + 1
+        })
+      } else {
+        lineAll.splice(linePos + 1, 0, '')
+        this.input = lineAll.join('\n')
+        this.$nextTick(() => {
+          event.target.selectionEnd = originalSelectionStart + 1
+        })
+      }
+
+      this.updateSpec()
     },
     tabber(event) {
       const text = this.input
