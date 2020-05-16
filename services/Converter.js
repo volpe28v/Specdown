@@ -1,7 +1,9 @@
-export default function(markdown, render) {
-  const st = new SpecTree()
-  markdown.split('\n').forEach((line) => st.add(line))
-  return st.toSpec(render)
+export default class {
+  static convertToSpec(markdown, render) {
+    const st = new SpecTree()
+    markdown.split('\n').forEach((line) => st.add(line))
+    return st.toSpec(render)
+  }
 }
 
 class SpecTree {

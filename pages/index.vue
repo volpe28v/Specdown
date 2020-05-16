@@ -38,7 +38,7 @@
 
 <script>
 import { debounce } from 'lodash'
-import converter from '@/services/Converter'
+import Converter from '@/services/Converter'
 import specRenders from '@/services/SpecRenders'
 import MarkdownTextArea from '@/components/MarkdownTextArea'
 
@@ -77,14 +77,14 @@ export default {
     }
   },
   mounted() {
-    this.output = converter(this.input, this.specRender)
+    this.output = Converter.convertToSpec(this.input, this.specRender)
   },
   methods: {
     onInput: debounce(function() {
       this.updateSpec()
     }, 500),
     updateSpec() {
-      this.output = converter(this.input, this.specRender)
+      this.output = Converter.convertToSpec(this.input, this.specRender)
     },
     onCopy() {
       this.$message('Copied!')
