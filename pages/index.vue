@@ -6,13 +6,13 @@
       </div>
       <div class="right-controller">
         <el-select
-          v-model="render"
+          v-model="specRender"
           value-key="name"
           placeholder="Select"
           @change="updateSpec"
         >
           <el-option
-            v-for="render in renders"
+            v-for="render in specRenders"
             :key="render.name"
             :label="render.name"
             :value="render"
@@ -25,14 +25,7 @@
     </div>
     <div class="body">
       <div class="left-pane">
-        <el-input
-          v-model="input"
-          type="textarea"
-          placeholder="Please input as markdown"
-          @input="onInput"
-          @keydown.tab.prevent.native="onTab($event)"
-          @keydown.enter.prevent.native="onEnter($event)"
-        />
+        <MarkdownTextArea v-model="input" @input="onInput" />
       </div>
       <div class="right-pane">
         <div class="render">
@@ -47,6 +40,7 @@
 import { debounce } from 'lodash'
 import converter from '@/services/Converter'
 import specRenders from '@/services/SpecRenders'
+import MarkdownTextArea from '@/components/MarkdownTextArea'
 
 const sampleMarkdown = [
   '- d: description',
@@ -66,111 +60,34 @@ const sampleMarkdown = [
 ]
 
 export default {
+  components: {
+    MarkdownTextArea
+  },
   data() {
     return {
       input: sampleMarkdown.join('\n'),
       output: '',
-      render: specRenders[0],
-      renders: specRenders
+      specRender: specRenders[0],
+      specRenders
     }
   },
   computed: {
     format() {
-      return this.render.format
+      return this.specRender.format
     }
   },
   mounted() {
-    this.output = converter(this.input, this.render)
+    this.output = converter(this.input, this.specRender)
   },
   methods: {
     onInput: debounce(function() {
       this.updateSpec()
     }, 500),
     updateSpec() {
-      this.output = converter(this.input, this.render)
+      this.output = converter(this.input, this.specRender)
     },
     onCopy() {
       this.$message('Copied!')
-    },
-    onEnter(event) {
-      if (event.keyCode !== 13) return
-
-      const text = this.input
-      const originalSelectionStart = event.target.selectionStart
-
-      const [linePos, lineAll] = this._getCursorLinePos(
-        originalSelectionStart,
-        text
-      )
-
-      const matches = lineAll[linePos].match(/(^[ ]*([-][ ]?)).*/)
-      if (matches) {
-        const prefix = matches[1]
-        lineAll.splice(linePos + 1, 0, prefix)
-        this.input = lineAll.join('\n')
-        this.$nextTick(() => {
-          event.target.selectionEnd = originalSelectionStart + prefix.length + 1
-        })
-      } else {
-        lineAll.splice(linePos + 1, 0, '')
-        this.input = lineAll.join('\n')
-        this.$nextTick(() => {
-          event.target.selectionEnd = originalSelectionStart + 1
-        })
-      }
-
-      this.updateSpec()
-    },
-    onTab(event) {
-      const text = this.input
-      const originalSelectionStart = event.target.selectionStart
-
-      const [linePos, lineAll] = this._getCursorLinePos(
-        originalSelectionStart,
-        text
-      )
-
-      const spaceNumber = 4
-      const spaces = ' '.repeat(spaceNumber)
-
-      if (event.shiftKey) {
-        const listReg = new RegExp('^' + spaces + '(.*)')
-        const matches = lineAll[linePos].match(listReg)
-        if (matches) {
-          lineAll[linePos] = matches[1]
-
-          this.input = lineAll.join('\n')
-          this.$nextTick(() => {
-            event.target.selectionEnd = originalSelectionStart - spaceNumber
-          })
-        }
-      } else {
-        lineAll[linePos] = spaces + lineAll[linePos]
-
-        this.input = lineAll.join('\n')
-        this.$nextTick(() => {
-          event.target.selectionEnd = originalSelectionStart + spaceNumber
-        })
-      }
-      this.updateSpec()
-    },
-    // ref: https://qiita.com/legokichi/items/ed2629b037e72c6cd639
-    _getCursorLinePos(pos, text) {
-      const lines = text.split('\n')
-      const charCounts = lines.map((line) => line.length + 1)
-      if (charCounts.length > 0 && charCounts[0] > 0) {
-        charCounts[0] -= 1
-      }
-      let cur = 0
-      let sum = 0
-      for (let i = 0; i < charCounts.length; i++) {
-        sum += charCounts[i]
-        if (pos <= sum) {
-          cur = i + 1
-          break
-        }
-      }
-      return [cur - 1, lines]
     }
   }
 }
