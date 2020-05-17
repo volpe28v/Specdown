@@ -1,5 +1,5 @@
 <template>
-  <div class="render">
+  <div class="CodeRenderArea">
     <pre v-highlightjs="value"><code :class="format"></code></pre>
   </div>
 </template>
@@ -20,26 +20,16 @@ export default {
 }
 </script>
 
-<style>
-.el-textarea__inner,
-code {
-  font-family: Menlo, Monaco, 'Courier New', monospace;
-  font-size: 14px;
-}
-
-.el-textarea__inner {
-  height: 100%;
-  line-height: 21px;
-  padding-top: 8px;
-}
-
-.render {
+<style lang="scss" scoped>
+.CodeRenderArea {
   flex: 1;
   overflow-y: auto;
-  margin: 0 10px;
-}
+  background-color: black;
 
-code {
-  line-height: 18px;
+  code {
+    font-family: Menlo, Monaco, 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 18px;
+  }
 }
 </style>
