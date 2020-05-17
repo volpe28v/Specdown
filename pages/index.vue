@@ -5,19 +5,11 @@
         SpecDown
       </div>
       <div class="right-controller">
-        <el-select
+        <SpecSelect
           v-model="specRender"
-          value-key="name"
-          placeholder="Select"
-          @change="updateSpec"
-        >
-          <el-option
-            v-for="render in specRenders"
-            :key="render.name"
-            :label="render.name"
-            :value="render"
-          />
-        </el-select>
+          :spec-renders="specRenders"
+          @input="updateSpec"
+        />
         <el-button v-clipboard:copy="output" type="primary" @click="onCopy">
           <i class="el-icon-copy-document"></i>
         </el-button>
@@ -38,6 +30,8 @@
 import { debounce } from 'lodash'
 import Converter from '@/services/Converter'
 import specRenders from '@/services/SpecRenders'
+
+import SpecSelect from '@/components/SpecSelect'
 import MarkdownTextArea from '@/components/MarkdownTextArea'
 import CodeRenderArea from '@/components/CodeRenderArea'
 
@@ -60,6 +54,7 @@ const sampleMarkdown = [
 
 export default {
   components: {
+    SpecSelect,
     MarkdownTextArea,
     CodeRenderArea
   },
@@ -127,6 +122,10 @@ body,
   flex: 1;
   display: flex;
   overflow: hidden;
+}
+
+.right-controller {
+  display: flex;
 }
 
 .left-pane {
