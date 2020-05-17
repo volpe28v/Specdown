@@ -110,3 +110,16 @@ export default {
   }
 }
 </script>
+
+<style>
+.el-textarea__inner {
+  font-family: Menlo, Monaco, 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.el-textarea__inner {
+  height: 100%;
+  line-height: 21px;
+  padding-top: 8px;
+}
+</style>

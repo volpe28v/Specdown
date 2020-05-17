@@ -28,9 +28,7 @@
         <MarkdownTextArea v-model="input" @input="onInput" />
       </div>
       <div class="right-pane">
-        <div class="render">
-          <pre v-highlightjs="output"><code :class="format"></code></pre>
-        </div>
+        <CodeRenderArea v-model="output" :format="format" />
       </div>
     </div>
   </div>
@@ -41,6 +39,7 @@ import { debounce } from 'lodash'
 import Converter from '@/services/Converter'
 import specRenders from '@/services/SpecRenders'
 import MarkdownTextArea from '@/components/MarkdownTextArea'
+import CodeRenderArea from '@/components/CodeRenderArea'
 
 const sampleMarkdown = [
   '- d: description',
@@ -61,7 +60,8 @@ const sampleMarkdown = [
 
 export default {
   components: {
-    MarkdownTextArea
+    MarkdownTextArea,
+    CodeRenderArea
   },
   data() {
     return {
@@ -77,7 +77,7 @@ export default {
     }
   },
   mounted() {
-    this.output = Converter.convertToSpec(this.input, this.specRender)
+    this.updateSpec()
   },
   methods: {
     onInput: debounce(function() {
@@ -134,32 +134,10 @@ body,
   flex: 1;
 }
 
-.el-textarea__inner,
-code {
-  font-family: Menlo, Monaco, 'Courier New', monospace;
-  font-size: 14px;
-}
-
-.el-textarea__inner {
-  height: 100%;
-  line-height: 21px;
-  padding-top: 8px;
-}
-
 .right-pane {
   display: flex;
   flex: 1;
   flex-direction: column;
   background-color: black;
-}
-
-.render {
-  flex: 1;
-  overflow-y: auto;
-  margin: 0 10px;
-}
-
-code {
-  line-height: 18px;
 }
 </style>
