@@ -1,12 +1,14 @@
 <template>
-  <el-input
-    v-model="input"
-    type="textarea"
-    placeholder="Please input as markdown"
-    @input="updateValue"
-    @keydown.tab.prevent.native="onTab($event)"
-    @keydown.enter.prevent.native="onEnter($event)"
-  />
+  <div class="MarkdownTextArea">
+    <el-input
+      v-model="input"
+      type="textarea"
+      placeholder="Please input as markdown"
+      @input="updateValue"
+      @keydown.tab.prevent.native="onTab($event)"
+      @keydown.enter.prevent.native="onEnter($event)"
+    />
+  </div>
 </template>
 
 <script>
@@ -111,15 +113,17 @@ export default {
 }
 </script>
 
-<style>
-.el-textarea__inner {
-  font-family: Menlo, Monaco, 'Courier New', monospace;
-  font-size: 14px;
-}
+<style lang="scss" scoped>
+.MarkdownTextArea {
+  display: flex;
+  flex: 1;
 
-.el-textarea__inner {
-  height: 100%;
-  line-height: 21px;
-  padding-top: 8px;
+  /deep/ .el-textarea__inner {
+    font-family: Menlo, Monaco, 'Courier New', monospace;
+    font-size: 14px;
+    height: 100%;
+    line-height: 21px;
+    padding-top: 8px;
+  }
 }
 </style>

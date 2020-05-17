@@ -93,7 +93,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 html,
 body,
 #__nuxt,
@@ -137,7 +137,5 @@ body,
 .right-pane {
   display: flex;
   flex: 1;
-  flex-direction: column;
-  background-color: black;
 }
 </style>
