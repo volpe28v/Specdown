@@ -21,4 +21,7 @@ $ yarn start
 $ yarn generate
 ```
 
+# Class Diagram
+![image](https://user-images.githubusercontent.com/754962/108221164-d3e6d000-717a-11eb-9689-df91b33c7d74.png)
+
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
