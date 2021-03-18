@@ -3,6 +3,7 @@
     <el-input
       v-model="input"
       type="textarea"
+      spellcheck="false"
       placeholder="Please input as markdown"
       @input="updateValue"
       @keydown.tab.prevent.native="onTab($event)"
